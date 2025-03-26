@@ -42,18 +42,23 @@ void AGrid::InitGrid()
 					{
 						for (TileOffset = 1; TileOffset < MinimumRunLength; ++TileOffset)
 						{
-							if (!GetGridAddressWithOffset(0, Column - (Horizontal ? TileOffset : 0), Row - (Horizontal ? 0 : TileOffset), TestAddress) || (GetTileFromGridAddress(TestAddress)->TileTypeID != TileID))
+                            if (!GetGridAddressWithOffset(0, Column - (Horizontal ? TileOffset : 0),
+                                                          Row - (Horizontal ? 0 : TileOffset), TestAddress)
+                                                    || (GetTileFromGridAddress(TestAddress)->TileTypeID != TileID))
 							{
 								// Not in a matching run, or off the edge of the map, so stop checking this axis.
 								break;
 							}
 						}
+
 						if (TileOffset == MinimumRunLength)
 						{
-							// We made it through the whole "check for matching run" loop. This tile completes a scoring run. Pick a new tile type and test again.
+                            // We made it through the whole "check for matching run" loop.
+                            // This tile completes a scoring run. Pick a new tile type and test again.
 							break;
 						}
 					}
+
 					if (TileOffset < MinimumRunLength)
 					{
 						// We didn't find a matching run in either direction, so we have a valid tile type.
@@ -66,13 +71,15 @@ void AGrid::InitGrid()
 					break;
 				}
 			} while (true);
+
 			CreateTile(TileLibrary[TileID].TileClass, TileLibrary[TileID].TileMaterial, SpawnLocation, GridAddress, TileID);
 		}
 	}
 }
 
 
-ATile* AGrid::CreateTile(TSubclassOf<class ATile> TileToSpawn, class UMaterialInstanceConstant* TileMaterial, FVector SpawnLocation, int32 SpawnGridAddress, int32 TileTypeID)
+ATile* AGrid::CreateTile(TSubclassOf<class ATile> TileToSpawn, class UMaterialInstanceConstant* TileMaterial,
+                         FVector SpawnLocation, int32 SpawnGridAddress, int32 TileTypeID)
 {
 	// If we have set something to spawn:
 	if (TileToSpawn)
@@ -135,7 +142,8 @@ ATile* AGrid::GetTileFromGridAddress(int32 GridAddress) const
 FVector AGrid::GetLocationFromGridAddress(int32 GridAddress) const
 {
 	FVector Center = GetActorLocation();
-	FVector OutLocation = FVector(-(GridWidth * 0.5f) * TileSize.X + (TileSize.X * 0.5f), 0.0f, -(GridHeight * 0.5f) * TileSize.Y + (TileSize.Y * 0.5f));
+    FVector OutLocation = FVector(-(GridWidth * 0.5f) * TileSize.X + (TileSize.X * 0.5f), 0.0f,
+                                  -(GridHeight * 0.5f) * TileSize.Y + (TileSize.Y * 0.5f));
 	check(GridWidth > 0);
 	OutLocation.X += TileSize.X * (float)(GridAddress % GridWidth);
 	OutLocation.Z += TileSize.Y * (float)(GridAddress / GridWidth);
@@ -228,6 +236,7 @@ void AGrid::OnTileFinishedMatching(ATile* InTile)
 		TilesBeingDestroyed.RemoveSwap(InTile);
 		InTile->Destroy();
 	}
+
 	if (TilesBeingDestroyed.Num() == 0)
 	{
 		// Make all tiles fall if they are above empty space.
@@ -252,16 +261,21 @@ void AGrid::RespawnTiles()
 		if (GetGridAddressWithOffset(0, x, GridHeight - 1, BaseAddress))
 		{
 			int32 y_depth;
-			for (y_depth = 0; GetGridAddressWithOffset(BaseAddress, 0, -y_depth, TestAddress) && (!GetTileFromGridAddress(TestAddress)); ++y_depth)
+            for (y_depth = 0; GetGridAddressWithOffset(BaseAddress, 0, -y_depth, TestAddress)
+                 && (!GetTileFromGridAddress(TestAddress)); ++y_depth)
 			{
 				// This loop finds the lowest Y value, but does nothing with it.
 			}
+
 			for (int32 y = y_depth - 1; y >= 0; --y)
 			{
 				int32 NewTileTypeID = SelectTileFromLibrary();
 				GetGridAddressWithOffset(BaseAddress, 0, -y, TestAddress);
-				// Move our tile up visually so it has room to fall, but don't change its grid address. The new grid address would be off-grid and invalid anyway.
-				if (ATile* NewTile = CreateTile(TileLibrary[NewTileTypeID].TileClass, TileLibrary[NewTileTypeID].TileMaterial, GetLocationFromGridAddressWithOffset(TestAddress, 0, (y_depth + 1)), TestAddress, NewTileTypeID))
+                // Move our tile up visually so it has room to fall, but don't change its grid address.
+                // The new grid address would be off-grid and invalid anyway.
+                if (ATile* NewTile = CreateTile(TileLibrary[NewTileTypeID].TileClass, TileLibrary[NewTileTypeID].TileMaterial,
+                                                GetLocationFromGridAddressWithOffset(TestAddress, 0, (y_depth + 1)),
+                                                TestAddress, NewTileTypeID))
 				{
 					TilesToCheck.Add(NewTile);
 					NewTile->TileState = ETileState::ETS_Falling;
@@ -278,7 +292,8 @@ void AGrid::RespawnTiles()
 
 	if (FallingTiles.Num() > 0)
 	{
-		// Any falling tiles that exist at this point are new ones, and are falling from physical locations (off-grid) to their correct locations.
+        // Any falling tiles that exist at this point are new ones, and are falling from physical locations
+        //(off-grid) to their correct locations.
 		for (ATile* Tile : FallingTiles)
 		{
 			Tile->StartFalling(true);
@@ -369,7 +384,8 @@ bool AGrid::IsMoveLegal(ATile* A, ATile* B)
 	return false;
 }
 
-TArray<ATile*> AGrid::FindNeighbors(ATile* StartingTile, bool bMustMatchID /* = true */, int32 RunLength /* = MinimumRunLength */) const
+TArray<ATile*> AGrid::FindNeighbors(ATile* StartingTile, bool bMustMatchID /* = true */,
+                                    int32 RunLength /* = MinimumRunLength */) const
 {
 	int32 NeighborGridAddress;
 	ATile* NeighborTile;
@@ -399,10 +415,12 @@ TArray<ATile*> AGrid::FindNeighbors(ATile* StartingTile, bool bMustMatchID /* = 
 		for (int32 Direction = -1; Direction <= 1; Direction += 2)
 		{
 			int32 MaxGridOffset = !bMustMatchID ? RunLength : (Horizontal ? GridWidth : GridHeight);
-			// Check run length. A run ends when we go off the edge of the map or hit a tile that doesn't match, provided we care about matching.
+            // Check run length. A run ends when we go off the edge of the map or hit a tile that doesn't match,
+            // provided we care about matching.
 			for (int32 GridOffset = 1; GridOffset < MaxGridOffset; ++GridOffset)
 			{
-				if (GetGridAddressWithOffset(StartingTile->GetGridAddress(), Direction * (Horizontal ? GridOffset : 0), Direction * (Horizontal ? 0 : GridOffset), NeighborGridAddress))
+                if (GetGridAddressWithOffset(StartingTile->GetGridAddress(), Direction * (Horizontal ? GridOffset : 0),
+                                             Direction * (Horizontal ? 0 : GridOffset), NeighborGridAddress))
 				{
 					NeighborTile = GetTileFromGridAddress(NeighborGridAddress);
 					if (NeighborTile && (!bMustMatchID || (NeighborTile->TileTypeID == StartingTile->TileTypeID)))
@@ -414,15 +432,18 @@ TArray<ATile*> AGrid::FindNeighbors(ATile* StartingTile, bool bMustMatchID /* = 
 				}
 			}
 		}
-		// See if we have enough to complete a run, or if matching wasn't required. If so, keep the tiles. Note that we add 1 to our match-in-progress because the starting tile isn't counted yet.
+        // See if we have enough to complete a run, or if matching wasn't required. If so, keep the tiles.
+        // Note that we add 1 to our match-in-progress because the starting tile isn't counted yet.
 		if (!bMustMatchID || ((MatchInProgress.Num() + 1) >= FMath::Min(RunLength, Horizontal ? GridWidth : GridHeight)))
 		{
 			AllMatchingTiles.Append(MatchInProgress);
 		}
 		MatchInProgress.Empty();
 	}
-	// If we found any other tile, or if we're not concerned with matching TileID, then we know we have a valid run, and we need to add the original tile to the list.
-	// If we do care about matching tile type and we haven't found anything by this point, then we don't have a match and should not return the starting tile in a list by itself.
+    // If we found any other tile, or if we're not concerned with matching TileID,
+    // then we know we have a valid run, and we need to add the original tile to the list.
+    // If we do care about matching tile type and we haven't found anything by this point,
+    // then we don't have a match and should not return the starting tile in a list by itself.
 	if ((AllMatchingTiles.Num() > 0) || !bMustMatchID)
 	{
 		AllMatchingTiles.Add(StartingTile);
@@ -550,7 +571,8 @@ void AGrid::OnSwapDisplayFinished(ATile* Tile)
 void AGrid::OnTileWasSelected(ATile* NewSelectedTile)
 {
 	// Can't select tiles while tiles are animating/moving, or game is not active.
-	if (FallingTiles.Num() || TilesBeingDestroyed.Num() || bPendingSwapMove || !UMatch3BlueprintFunctionLibrary::IsGameActive(this) || !NewSelectedTile)
+    if (FallingTiles.Num() || TilesBeingDestroyed.Num() || bPendingSwapMove
+            || !UMatch3BlueprintFunctionLibrary::IsGameActive(this) || !NewSelectedTile)
 	{
 		return;
 	}
@@ -592,7 +614,8 @@ void AGrid::OnTileWasSelected(ATile* NewSelectedTile)
 				{
 					// Detonate all bombs at once!
 					SetLastMove(EMatch3MoveType::MT_AllTheBombs);
-					// If we had multiple bomb types, this would only find the type of bomb we clicked on, because we're matching by checking TileTypeID instead of bCanExplode.
+                    // If we had multiple bomb types, this would only find the type of bomb we clicked on,
+                    // because we're matching by checking TileTypeID instead of bCanExplode.
 					TArray<ATile*> Bombs = FindTilesOfType(NewSelectedTile->TileTypeID);
 					TArray<ATile*> TilesToDestroyForCurrentBomb;
 					for (ATile* Bomb : Bombs)
@@ -641,19 +664,23 @@ bool AGrid::IsUnwinnable()
 			return false;
 		}
 		// If any tile can move in any direction, then the game is not unwinnable.
-		if (GetGridAddressWithOffset(TileGridAddress, 0, -1, NeighborGridAddress) && IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
+        if (GetGridAddressWithOffset(TileGridAddress, 0, -1, NeighborGridAddress) &&
+                IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
 		{
 			return false;
 		}
-		if (GetGridAddressWithOffset(TileGridAddress, 0, 1, NeighborGridAddress) && IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
+        if (GetGridAddressWithOffset(TileGridAddress, 0, 1, NeighborGridAddress) &&
+                IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
 		{
 			return false;
 		}
-		if (GetGridAddressWithOffset(TileGridAddress, -1, 0, NeighborGridAddress) && IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
+        if (GetGridAddressWithOffset(TileGridAddress, -1, 0, NeighborGridAddress) &&
+                IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
 		{
 			return false;
 		}
-		if (GetGridAddressWithOffset(TileGridAddress, 1, 0, NeighborGridAddress) && IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
+        if (GetGridAddressWithOffset(TileGridAddress, 1, 0, NeighborGridAddress) &&
+                IsMoveLegal(Tile, GetTileFromGridAddress(NeighborGridAddress)))
 		{
 			return false;
 		}

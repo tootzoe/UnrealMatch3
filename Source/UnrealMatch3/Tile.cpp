@@ -33,15 +33,14 @@ void ATile::BeginPlay()
 	// Set our class up to handle touch events.
 	OnInputTouchBegin.AddUniqueDynamic(this, &ATile::TilePress);
 	OnInputTouchEnter.AddUniqueDynamic(this, &ATile::TileEnter);
+
 }
 
 // Called every frame
 
 void ATile::SetTileMaterial_Implementation(class UMaterialInstanceConstant* MaterialToUse)
 {
-   // auto *mi = dynamic_cast <UMaterialInterface *>(MaterialToUse);
 
-   // if(mi)
     GetRenderComponent()->SetMaterial(0,   Cast<UMaterialInterface  >(MaterialToUse)  );  // tootzoe
 }
 

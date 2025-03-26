@@ -7,6 +7,7 @@
 #include "Match3PlayerController.h"
 #include "Match3GameInstance.h"
 #include "Match3SaveGame.h"
+#include "TimerManager.h"
 
 
 AMatch3GameMode::AMatch3GameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -18,6 +19,7 @@ AMatch3GameMode::AMatch3GameMode(const FObjectInitializer& ObjectInitializer) : 
 	TileMoveSpeed = 50.0f;
 	TimeRemaining = 5.0f;
 	FinalPlace = 0;
+
 }
 
 void AMatch3GameMode::BeginPlay()
@@ -25,7 +27,8 @@ void AMatch3GameMode::BeginPlay()
 	Super::BeginPlay();
 	bGameWillBeWon = false;
 	ChangeMenuWidget(StartingWidgetClass);
-	GetWorldTimerManager().SetTimer(GameOverTimer, this, &AMatch3GameMode::GameOver, TimeRemaining, false);
+    GetWorldTimerManager().SetTimer(GameOverTimer, this, &AMatch3GameMode::GameOver, TimeRemaining, false);
+
 
 	// Get our current save data from the game instance.
 	UMatch3GameInstance* GameInstance = Cast<UMatch3GameInstance>(UGameplayStatics::GetGameInstance(this));
@@ -37,6 +40,10 @@ void AMatch3GameMode::BeginPlay()
 			GameInstance->UpdateSave(this, SaveGameData);
 		}
 	}
+
+
+
+
 }
 
 void AMatch3GameMode::GameRestart()
@@ -199,7 +206,7 @@ void AMatch3GameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
 {
 	if (CurrentWidget)
 	{
-		CurrentWidget->RemoveFromViewport();
+        CurrentWidget->RemoveFromParent();
 		CurrentWidget = nullptr;
 	}
 	if (NewWidgetClass)
