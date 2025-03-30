@@ -1,11 +1,13 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "Tile.h"
+
 #include "UnrealMatch3.h"
 #include "Match3GameMode.h"
 #include "Grid.h"
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstanceConstant.h"
-#include "Tile.h"
+
 
 // Sets default values
 ATile::ATile()

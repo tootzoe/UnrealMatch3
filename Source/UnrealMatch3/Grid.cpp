@@ -1,11 +1,14 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+
+#include "Grid.h"
+
 #include "UnrealMatch3.h"
 #include "Math/UnrealMathUtility.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match3GameMode.h"
 
-#include "Grid.h"
+
 
 // Sets default values
 AGrid::AGrid(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -14,7 +17,7 @@ AGrid::AGrid(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitiali
 	PrimaryActorTick.bCanEverTick = false;
 
 	MinimumRunLength = 3;
-	TileSize.Set(25.0f, 25.0f);
+    TileSize.Set(28.0f, 28.0f);
 }
 
 void AGrid::InitGrid()

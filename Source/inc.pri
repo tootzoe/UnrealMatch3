@@ -262,6 +262,7 @@ INCLUDEPATH += $$UESRCROOT/../Plugins/Runtime/GameplayAbilities/Source/GameplayA
 INCLUDEPATH += $$UESRCROOT/../Plugins/Runtime/ChunkDownloader/Source/Public
 ## online subsystem
 INCLUDEPATH += $$UESRCROOT/../Plugins/Online/OnlineSubsystem/Source/Public
+INCLUDEPATH += $$UESRCROOT/../Plugins/Online/OnlineServices/Source/OnlineServicesInterface/Public
 
 
 ## if have problem , try to use 'Intermediate' folder files

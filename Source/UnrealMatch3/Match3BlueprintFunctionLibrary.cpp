@@ -30,7 +30,9 @@ FString UMatch3BlueprintFunctionLibrary::GetOnlineAccountID(APlayerController* P
 {
 	if (PlayerController && PlayerController->PlayerState && PlayerController->PlayerState->GetUniqueId().IsValid())
 	{
-		return PlayerController->PlayerState->GetUniqueId()->GetHexEncodedString();
+        FString uid = PlayerController->PlayerState->GetUniqueId()->GetHexEncodedString();
+
+        return uid;
 	}
 	return FString();
 }

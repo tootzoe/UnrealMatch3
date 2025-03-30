@@ -1,9 +1,11 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+
+#include "Match3GameMode.h"
 #include "UnrealMatch3.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Pawn.h"
-#include "Match3GameMode.h"
+
 #include "Match3PlayerController.h"
 #include "Match3GameInstance.h"
 #include "Match3SaveGame.h"

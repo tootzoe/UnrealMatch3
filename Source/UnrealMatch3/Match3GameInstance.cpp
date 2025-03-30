@@ -1,18 +1,42 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+
+#include "Match3GameInstance.h"
 #include "UnrealMatch3.h"
 #include "Match3SaveGame.h"
 #include "UnrealClient.h"
 #include "Online.h"
-#include "OnlineSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interfaces/OnlinePurchaseInterface.h"
-#include "Match3GameInstance.h"
+
 
 UMatch3GameInstance::UMatch3GameInstance()
 {
 	DefaultSaveGameSlot = TEXT("_Match3Game");
 }
+
+void UMatch3GameInstance::Init()
+{
+    // Point to a default save slot at startup. We will later change our save slot when we log in.
+    InitSaveGameSlot();
+
+    LoginChangedHandle = FCoreDelegates::OnUserLoginChangedEvent.AddUObject(this, &UMatch3GameInstance::OnLoginChanged);
+    EnteringForegroundHandle = FCoreDelegates::ApplicationHasEnteredForegroundDelegate.AddUObject(this, &UMatch3GameInstance::OnEnteringForeground);
+    EnteringBackgroundHandle = FCoreDelegates::ApplicationWillEnterBackgroundDelegate.AddUObject(this, &UMatch3GameInstance::OnEnteringBackground);
+    ViewportHandle = FViewport::ViewportResizedEvent.AddUObject(this, &UMatch3GameInstance::OnViewportResize_Internal);
+
+
+    IOnlinePurchasePtr PurchaseInterface = Online::GetPurchaseInterface();
+    if (PurchaseInterface.IsValid())
+    {
+        UnexpectedPurchaseHandle = PurchaseInterface->AddOnUnexpectedPurchaseReceiptDelegate_Handle(FOnUnexpectedPurchaseReceiptDelegate::CreateUObject(this, &UMatch3GameInstance::OnUnexpectedPurchase_Internal));
+    }
+
+    Super::Init();
+
+}
+
+
 
 bool UMatch3GameInstance::FindSaveDataForLevel(UObject* WorldContextObject, FMatch3LevelSaveData& OutSaveData)
 {
@@ -55,26 +79,6 @@ void UMatch3GameInstance::ClearCustomInt(FString FieldName)
 	InstanceGameData->ClearCustomInt(FieldName);
 }
 
-void UMatch3GameInstance::Init()
-{
-	// Point to a default save slot at startup. We will later change our save slot when we log in.
-	InitSaveGameSlot();
-
-	
-	LoginChangedHandle = FCoreDelegates::OnUserLoginChangedEvent.AddUObject(this, &UMatch3GameInstance::OnLoginChanged);
-	EnteringForegroundHandle = FCoreDelegates::ApplicationHasEnteredForegroundDelegate.AddUObject(this, &UMatch3GameInstance::OnEnteringForeground);
-	EnteringBackgroundHandle = FCoreDelegates::ApplicationWillEnterBackgroundDelegate.AddUObject(this, &UMatch3GameInstance::OnEnteringBackground);
-	ViewportHandle = FViewport::ViewportResizedEvent.AddUObject(this, &UMatch3GameInstance::OnViewportResize_Internal);
-
-	IOnlinePurchasePtr PurchaseInterface = Online::GetPurchaseInterface();
-	if (PurchaseInterface.IsValid())
-	{
-		UnexpectedPurchaseHandle = PurchaseInterface->AddOnUnexpectedPurchaseReceiptDelegate_Handle(FOnUnexpectedPurchaseReceiptDelegate::CreateUObject(this, &UMatch3GameInstance::OnUnexpectedPurchase_Internal));
-	}
-	
-
-	Super::Init();
-}
 
 
 
