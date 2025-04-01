@@ -20,22 +20,14 @@
 		},
 		{
 			"Name": "OnlineSubsystem",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "OnlineSubsystemNull",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "AnalyticsBlueprintLibrary",
-			"Enabled": true
-		},
-		{
-			"Name": "OnlineSubsystemFacebook",
-			"Enabled": true
-		},
-		{
-			"Name": "OnlineSubsystemSteam",
 			"Enabled": true
 		},
 		{
@@ -43,7 +35,30 @@
 			"Enabled": true
 		},
 		{
+			"Name": "OnlineSubsystemUtils",
+			"Enabled": false
+		},
+		{
+			"Name": "OnlineSubsystemGooglePlay",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Android"
+			]
+		},
+		{
+			"Name": "OnlineSubsystemIOS",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"IOS",
+				"TVOS"
+			]
+		},
+		{
 			"Name": "OnlineServicesEOS",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineServicesEOSGS",
 			"Enabled": true
 		}
 	],

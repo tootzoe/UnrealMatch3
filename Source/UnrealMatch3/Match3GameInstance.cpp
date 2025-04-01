@@ -5,10 +5,13 @@
 #include "UnrealMatch3.h"
 #include "Match3SaveGame.h"
 #include "UnrealClient.h"
-#include "Online.h"
+#include "Online/OnlineServices.h"
+#include "Online/Auth.h"
 #include "Kismet/GameplayStatics.h"
-#include "Interfaces/OnlinePurchaseInterface.h"
+//#include "Interfaces/OnlinePurchaseInterface.h"
 
+
+using namespace UE::Online;
 
 UMatch3GameInstance::UMatch3GameInstance()
 {
@@ -25,12 +28,58 @@ void UMatch3GameInstance::Init()
     EnteringBackgroundHandle = FCoreDelegates::ApplicationWillEnterBackgroundDelegate.AddUObject(this, &UMatch3GameInstance::OnEnteringBackground);
     ViewportHandle = FViewport::ViewportResizedEvent.AddUObject(this, &UMatch3GameInstance::OnViewportResize_Internal);
 
-
+#if 0
     IOnlinePurchasePtr PurchaseInterface = Online::GetPurchaseInterface();
     if (PurchaseInterface.IsValid())
     {
         UnexpectedPurchaseHandle = PurchaseInterface->AddOnUnexpectedPurchaseReceiptDelegate_Handle(FOnUnexpectedPurchaseReceiptDelegate::CreateUObject(this, &UMatch3GameInstance::OnUnexpectedPurchase_Internal));
     }
+#endif
+
+#if 1
+
+
+
+    IOnlineServicesPtr onlineSvr = GetServices();
+
+    if(    onlineSvr.IsValid() ){
+
+        EOnlineServices olType =  onlineSvr->GetServicesProvider();
+
+         UE_LOG(LogTemp, Warning, TEXT(".........onlineSvr is valid................type = %d") ,  (int32)olType );
+
+
+
+       IAuthPtr authPtr =  onlineSvr->GetAuthInterface();
+
+         // if (OnlineServicesInfoInternal->OnlineServices.IsValid())
+         //     {
+         //         // Initialize Interface ptrs
+         //         OnlineServicesInfoInternal->AuthInterface = OnlineServicesInfoInternal->OnlineServices->GetAuthInterface();
+         //         check(OnlineServicesInfoInternal->AuthInterface.IsValid());
+
+         //         OnlineServicesInfoInternal->TitleFileInterface = OnlineServicesInfoInternal->OnlineServices->GetTitleFileInterface();
+         //         check(OnlineServicesInfoInternal->TitleFileInterface.IsValid());
+         //     }
+         //     else {
+         //         UE_LOG(LogOnlineSampleOnlineSubsystem, Error, TEXT("Error: Failed to initialize services."));
+         //     }
+
+
+
+      if(authPtr.IsValid()){
+          UE_LOG(LogTemp, Warning, TEXT(".........authPtr is valid................"));
+      }else{
+          UE_LOG(LogTemp, Warning, TEXT(".........authPtr is invalid................"));
+      }
+
+    }else{
+        UE_LOG(LogTemp, Warning, TEXT(".........onlineSvr is invalid................"));
+
+    }
+
+#endif
+
 
     Super::Init();
 
