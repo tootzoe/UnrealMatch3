@@ -8,8 +8,55 @@ public class UnrealMatch3Target : TargetRules
 	public UnrealMatch3Target(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		DefaultBuildSettings = BuildSettingsVersion.V5;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_5;
-		ExtraModuleNames.Add("UnrealMatch3");
+                DefaultBuildSettings = BuildSettingsVersion.V7;
+                IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+		ExtraModuleNames.AddRange( new string[] { "Match3" } );
+
+
+                //tootzoe commented
+                //       if (Target.Platform == UnrealTargetPlatform.IOS && !bIsEngineInstalled)
+                //       {
+                //           bCompileAPEX = false;
+                //           bCompileNvCloth = false;
+                //           bCompileICU = true;
+                //                       bBuildDeveloperTools = false;
+                //           bCompileRecast = true;
+                //           bCompileFreeType = true;
+                //           bCompileForSize = true;
+                //       }
+
+
+                ExtraModuleNames.AddRange( new string[] {
+                "OnlineSubsystem" ,
+                "OnlineSubsystemNull",
+                "OnlineSubsystemUtils"
+                } );
+
+
+                if (Target.Platform == UnrealTargetPlatform.Android)
+                {
+                    ExtraModuleNames.Add("OnlineSubsystemGooglePlay");
+                    ExtraModuleNames.Add("AndroidAdvertising");
+
+                    AdditionalCompilerArguments += " -w";
+
+                        bUseLoggingInShipping = true;
+                        GlobalDefinitions.Add("USE_LOGGING_IN_SHIPPING=1");
+
+
+                }
+
+                if (Target.Platform == UnrealTargetPlatform.IOS)
+                {
+                        ExtraModuleNames.Add("IOSAdvertising");
+
+                       // AdditionalCompilerArguments += " -w";
+
+                        bUseLoggingInShipping = true;
+                        GlobalDefinitions.Add("USE_LOGGING_IN_SHIPPING=1");
+
+                }
+
+
 	}
 }
