@@ -13,6 +13,13 @@ public class Match3 : ModuleRules
                 "InputCore", "Paper2D", "UMG"
                 });
 
+
+               PublicDependencyModuleNames.AddRange(new string[]
+               {   //tootzoe added for googlePlay plugin
+                                "PlayIntegrity"
+               });
+
+
                 PrivateDependencyModuleNames.AddRange(new string[] {
                 "OnlineSubsystem",
                 });

@@ -8,7 +8,7 @@ public class UnrealMatch3EditorTarget : TargetRules
 	public UnrealMatch3EditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V7;
+		DefaultBuildSettings = BuildSettingsVersion.V9;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 		ExtraModuleNames.AddRange( new string[] { "Match3" } );
 	}

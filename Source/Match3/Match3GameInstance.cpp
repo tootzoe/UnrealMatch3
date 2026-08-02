@@ -11,6 +11,7 @@
 #include "UnrealClient.h"
 #include "Online.h"
 #include "OnlineSubsystem.h"
+#include "Interfaces/OnlinePurchaseInterface.h"
 
 
 UMatch3GameInstance::UMatch3GameInstance()
@@ -59,6 +60,8 @@ void UMatch3GameInstance::ClearCustomInt(FString FieldName)
 	InstanceGameData->ClearCustomInt(FieldName);
 }
 
+
+
 void UMatch3GameInstance::Init()
 {
 	// Point to a default save slot at startup. We will later change our save slot when we log in.
@@ -70,12 +73,20 @@ void UMatch3GameInstance::Init()
 	EnteringBackgroundHandle = FCoreDelegates::ApplicationWillEnterBackgroundDelegate.AddUObject(this, &UMatch3GameInstance::OnEnteringBackground);
 	ViewportHandle = FViewport::ViewportResizedEvent.AddUObject(this, &UMatch3GameInstance::OnViewportResize_Internal);
 
-	IOnlinePurchasePtr PurchaseInterface = Online::GetPurchaseInterface();
+    IOnlinePurchasePtr PurchaseInterface = Online::GetPurchaseInterface();
+
+   // IOnlinePurchasePtr PurchaseInterface = IOnlineSubsystem::Get()->GetPurchaseInterface(); // ::GetPurchaseInterface();
+
+
 	if (PurchaseInterface.IsValid())
 	{
         UE_LOG(LogTemp, Error, TEXT("AddOnUnexpectedPurchaseReceiptDelegate_Handle , need fix here....%hs") , __func__);
         //tootzoe
-        //UnexpectedPurchaseHandle = PurchaseInterface->AddOnUnexpectedPurchaseReceiptDelegate_Handle(FOnUnexpectedPurchaseReceiptDelegate::CreateUObject(this, &UMatch3GameInstance::OnUnexpectedPurchase_Internal));
+          UnexpectedPurchaseHandle = PurchaseInterface->AddOnUnexpectedPurchaseReceiptDelegate_Handle(
+                      FOnUnexpectedPurchaseReceiptDelegate::CreateUObject(this, &UMatch3GameInstance::OnUnexpectedPurchase_Internal)
+                      );
+    //  FOnUnexpectedPurchaseReceiptDelegate tmpDelegate =  FOnUnexpectedPurchaseReceiptDelegate::CreateUObject(this, &UMatch3GameInstance::OnUnexpectedPurchase_Internal);
+
 	}
 	
 

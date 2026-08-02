@@ -44,12 +44,22 @@
 			"SupportedTargetPlatforms": [
 				"Android"
 			]
+		},
+		{
+			"Name": "GooglePlay",
+			"Enabled": true
+		},
+		{
+			"Name": "TootAdMob",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
 		"Android",
 		"Desktop",
-		"IOS"
+		"IOS",
+		"Mac",
+		"Windows"
 	],
 	"EpicSampleNameHash": "2622819489"
 }

@@ -5,6 +5,7 @@ tootbd/
 
 # qt pro
 *.pro.user
+.qtcreator
 
 # Compiled Object files
 *.slo

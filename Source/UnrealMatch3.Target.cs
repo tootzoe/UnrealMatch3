@@ -8,7 +8,7 @@ public class UnrealMatch3Target : TargetRules
 	public UnrealMatch3Target(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-                DefaultBuildSettings = BuildSettingsVersion.V7;
+                DefaultBuildSettings = BuildSettingsVersion.V9;
                 IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 		ExtraModuleNames.AddRange( new string[] { "Match3" } );
 
@@ -28,9 +28,14 @@ public class UnrealMatch3Target : TargetRules
 
                 ExtraModuleNames.AddRange( new string[] {
                 "OnlineSubsystem" ,
-                "OnlineSubsystemNull",
                 "OnlineSubsystemUtils"
                 } );
+
+                                if (Target.Platform == UnrealTargetPlatform.Win64)
+                                {
+                                    ExtraModuleNames.Add("OnlineSubsystemNull");
+
+                                }
 
 
                 if (Target.Platform == UnrealTargetPlatform.Android)
@@ -38,10 +43,10 @@ public class UnrealMatch3Target : TargetRules
                     ExtraModuleNames.Add("OnlineSubsystemGooglePlay");
                     ExtraModuleNames.Add("AndroidAdvertising");
 
-                    AdditionalCompilerArguments += " -w";
+                  //  AdditionalCompilerArguments += " -w";
 
-                        bUseLoggingInShipping = true;
-                        GlobalDefinitions.Add("USE_LOGGING_IN_SHIPPING=1");
+                  //      bUseLoggingInShipping = true;
+                  //      GlobalDefinitions.Add("USE_LOGGING_IN_SHIPPING=1");
 
 
                 }
@@ -52,8 +57,8 @@ public class UnrealMatch3Target : TargetRules
 
                        // AdditionalCompilerArguments += " -w";
 
-                        bUseLoggingInShipping = true;
-                        GlobalDefinitions.Add("USE_LOGGING_IN_SHIPPING=1");
+                    //    bUseLoggingInShipping = true;
+                    //    GlobalDefinitions.Add("USE_LOGGING_IN_SHIPPING=1");
 
                 }
 
